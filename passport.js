@@ -5,12 +5,13 @@ const User = require('./models/user');
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET_KEY || 'default-secret-key',
+  secretOrKey: process.env.JWT_SECRET,
 };
 
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
-    const user = await User.findById(payload.sub);
+    const user = await User.findOne({ email: payload.email })
+    console.log(user);
 
     if (!user) {
       return done(null, false);
