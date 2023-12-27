@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 
-// Register a new user
 router.post('/register', async (req, res) => {
   try {
     const existingUser = await User.findOne({ phone: req.body.phone });
@@ -39,28 +38,23 @@ router.post('/register', async (req, res) => {
       },
 
     });
-    
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
 
-// Login and generate a JWT token
 router.post('/login', async (req, res) => {
   try {
     const { phone, password } = req.body;
 
     const user = await User.findOne({ phone });
 
-    // If the user is not found or the password is incorrect, send an authentication failed response
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({
-        status: 'success',
-        token,
-        data: {
-          user,
-        },
+        status: "Authentication failed. Check your credentials and try again.",
+        data: null,
       });
     }
 
@@ -68,19 +62,19 @@ router.post('/login', async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    // Send the token in the response
     return res.status(201).json({
       status: 'success',
       token,
       data: {
         user,
       },
-
     });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 module.exports = router;
