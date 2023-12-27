@@ -3,8 +3,7 @@ const express = require('express');
 const Station = require('../models/station');
 const passport = require('passport');
 const router = express.Router();
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3()
+
 
 // Middleware for JWT authentication
 const authenticateJWT = passport.authenticate('jwt', { session: false });
