@@ -2,8 +2,9 @@
 const express = require('express');
 const Station = require('../models/station');
 const passport = require('passport');
-
 const router = express.Router();
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3()
 
 // Middleware for JWT authentication
 const authenticateJWT = passport.authenticate('jwt', { session: false });
@@ -50,6 +51,7 @@ router.post('/create', authenticateJWT, isAdmin, async (req, res) => {
   }
 });
 
+
 // Delete station by ID (secured for admin users only)
 router.delete('/delete', authenticateJWT, isAdmin, async (req, res) => {
   try {
@@ -75,7 +77,7 @@ router.put('/update', authenticateJWT, isAdmin, async (req, res) => {
     if (!updatedStation) {
       return res.status(404).json({ message: 'Station not found.' });
     }
-
+    
     res.json({ message: 'Station updated successfully.', station: updatedStation });
   } catch (error) {
     res.status(500).json({ message: error.message });

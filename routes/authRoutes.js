@@ -11,22 +11,23 @@ require('dotenv').config();
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
-    const existingUser = await User.findOne({ email: req.body.email });
+    const existingUser = await User.findOne({ phone: req.body.phone });
 
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists.' });
     }
 
     const user = new User({
-      email: req.body.email,
+      phone: req.body.phone,
       username: req.body.username,
+      carType: req.body.carType,
       password: req.body.password,
       role: req.body.role,
     });
 
     await user.save();
     console.log(process.env.JWT_SECRET);
-    const token = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ phone: user.phone, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
@@ -38,6 +39,7 @@ router.post('/register', async (req, res) => {
       },
 
     });
+    
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -47,9 +49,9 @@ router.post('/register', async (req, res) => {
 // Login and generate a JWT token
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { phone, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ phone });
 
     // If the user is not found or the password is incorrect, send an authentication failed response
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -62,7 +64,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ phone: user.phone, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 

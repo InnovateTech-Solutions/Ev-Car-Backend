@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true, required: true },
+  phone: { type: String, unique: true, required: true },
   username: { type: String, required: true },
+  carType: { type: String },
   password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'user'], default: 'user' },
+  role: { type: String, enum: ['admin', 'user'], default: 'user', required: true },
 });
 
 // Hash the password before saving it to the database
