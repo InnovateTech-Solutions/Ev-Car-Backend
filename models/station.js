@@ -1,8 +1,8 @@
 // models/station.js
 const mongoose = require('mongoose');
+const chargerSchema = require('./charger'); 
 
 const stationSchema = new mongoose.Schema({
-  
   title: { type: String, required: true },
   address: { type: String, required: true },
   coordinates: { type: String, required: true },
@@ -13,7 +13,7 @@ const stationSchema = new mongoose.Schema({
     enum: ['charging_station', 'mobile_charging', 'home_charging_provider'],
     required: true,
   },
-  chargers: { type: String, required: function () { return ['charging_station', 'mobile_charging'].includes(this.type); } },
+  chargers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Charger' }],
 });
 
 const Station = mongoose.model('Station', stationSchema);
