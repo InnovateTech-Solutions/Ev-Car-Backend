@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 // MongoDB connection
-mongoose.connect('mongodb+srv://dbuser:Afaomr2001!@cluster0.qsmru3l.mongodb.net/Ev-Car', {
+mongoose.connect('mongodb+srv://dbuser:Afaomr2001!@cluster0.qsmru3l.mongodb.net/Ev-Car-Tesing', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
