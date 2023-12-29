@@ -10,7 +10,7 @@ const jwtOptions = {
 
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
-    const user = await User.findOne({ email: payload.email })
+    const user = await User.findOne({ phone: payload.phone })
     console.log(user);
 
     if (!user) {
