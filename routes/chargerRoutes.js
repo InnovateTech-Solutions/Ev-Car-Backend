@@ -4,6 +4,8 @@ const Charger = require('../models/charger');
 const passport = require('passport');
 const router = express.Router();
 
+
+//used middlewares
 const authenticateJWT = passport.authenticate('jwt', { session: false });
 
 const isAdmin = (req, res, next) => {
@@ -13,7 +15,9 @@ const isAdmin = (req, res, next) => {
     return res.status(403).json({ message: 'Permission denied. Admins only.' });
   }
 };
+////////////////////////////////////////////////////////////////////////////
 
+// crud operations for chargers
 router.post('/add', authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { title, image } = req.body;
@@ -34,6 +38,23 @@ router.post('/add', authenticateJWT, isAdmin, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Update station by ID (secured for admin users only)
+router.put('/update', authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    const chargerId = req.body.id;
+    const updatedCharger = await Station.findByIdAndUpdate(chargerId, req.body, { new: true });
+
+    if (!updatedCharger) {
+      return res.status(404).json({ message: 'Station not found.' });
+    }
+
+    res.json({ message: 'Station updated successfully.', station: updatedChager });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }r
+});
+
 
 router.get('/getAllChargers', async (req, res) => {
     try {

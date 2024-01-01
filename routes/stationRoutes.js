@@ -23,9 +23,9 @@ router.get('/getStationsByType', async (req, res) => {
   try {
     const { type } = req.query;
 
-    if (!type) {
-      return res.status(400).json({ message: 'Type parameter is required.' });
-    }
+    // if (!type) {
+    //   return res.status(400).json({ message: 'type parameter is required.' });
+    // }
 
     const validTypes = ['charging_station', 'mobile_charging', 'home_charging_provider'];
     if (!validTypes.includes(type)) {
@@ -136,9 +136,6 @@ router.post('/create', authenticateJWT, isAdmin, async (req, res) => {
     else{
       next('Provided type does not match any valid types');
     }
-    
-
-
 
   } catch (error) {
     res.status(500).json({ message: error.message });

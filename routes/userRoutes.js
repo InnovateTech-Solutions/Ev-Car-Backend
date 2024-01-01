@@ -40,5 +40,4 @@ router.put('/update', authenticateJWT, async (req, res) => {
     }
   });
 
-
 module.exports = router;
