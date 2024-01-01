@@ -12,7 +12,7 @@ const stationSchema = new mongoose.Schema({
     type: String,
     enum: ['charging_station', 'mobile_charging', 'home_charging_provider'],
     required: true,
-  },
+  }, 
   chargers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Charger' }],
 });
 

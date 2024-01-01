@@ -9,6 +9,8 @@ const jwtStrategy = require('./passport'); // Import your passport configuration
 const stationRoutes = require('./routes/stationRoutes');
 const authRoutes = require('./routes/authRoutes');
 const chargerRoutes = require('./routes/chargerRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 
 require('dotenv').config();
 const app = express();
@@ -32,6 +34,7 @@ passport.use(jwtStrategy);
 // Routes
 app.use('/stations', stationRoutes);
 app.use('/chargers', chargerRoutes);
+app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 
 app.listen(PORT, () => {
