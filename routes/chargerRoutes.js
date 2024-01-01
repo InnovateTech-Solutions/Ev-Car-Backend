@@ -39,20 +39,20 @@ router.post('/add', authenticateJWT, isAdmin, async (req, res) => {
   }
 });
 
-// Update station by ID (secured for admin users only)
+// Update charger by ID (secured for admin users only)
 router.put('/update', authenticateJWT, isAdmin, async (req, res) => {
   try {
-    const chargerId = req.body.id;
-    const updatedCharger = await Station.findByIdAndUpdate(chargerId, req.body, { new: true });
+    const {id} = req.body;
+    const updatedCharger = await Charger.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updatedCharger) {
       return res.status(404).json({ message: 'Station not found.' });
     }
 
-    res.json({ message: 'Station updated successfully.', station: updatedChager });
+    res.json({ message: 'Station updated successfully.', charger: updatedCharger });
   } catch (error) {
     res.status(500).json({ message: error.message });
-  }r
+  }
 });
 
 
