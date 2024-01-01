@@ -30,5 +30,15 @@ router.put('/update', authenticateJWT, async (req, res) => {
     }
   });
 
+  router.get('/getUserDetails', authenticateJWT, async (req, res) => {
+    try {
+      const id = req.user._id;
+      const user = await User.findById(id);
+      res.status(201).json(user);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 
 module.exports = router;
