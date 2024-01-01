@@ -21,11 +21,11 @@ const isAdmin = (req, res, next) => {
 // gets a list of stations by type
 router.get('/getStationsByType', async (req, res) => {
   try {
-    const { type } = req.body.type;
+    const { type } = req.body;
 
-    // if (!type) {
-    //   return res.status(400).json({ message: 'type parameter is required.' });
-    // }
+    if (!type) {
+      return res.status(400).json({ message: 'type parameter is required.' });
+    }
 
     const validTypes = ['charging_station', 'mobile_charging', 'home_charging_provider'];
     if (!validTypes.includes(type)) {
