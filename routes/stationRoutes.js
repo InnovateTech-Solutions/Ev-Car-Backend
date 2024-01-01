@@ -21,7 +21,7 @@ const isAdmin = (req, res, next) => {
 // gets a list of stations by type
 router.get('/getStationsByType', async (req, res) => {
   try {
-    const { type } = req.query;
+    const { type } = req.type;
 
     // if (!type) {
     //   return res.status(400).json({ message: 'type parameter is required.' });
