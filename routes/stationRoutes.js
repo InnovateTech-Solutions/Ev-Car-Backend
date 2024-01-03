@@ -212,9 +212,6 @@ router.post('/deleteChargers', authenticateJWT, isAdmin, async (req, res) => {
   }
 });
 
- 
-
-
 
 // Delete station by ID (secured for admin users only)
 router.delete('/delete/:stationId', authenticateJWT, isAdmin, async (req, res) => {

@@ -6,6 +6,16 @@ const router = express.Router();
 
 const authenticateJWT = passport.authenticate('jwt', { session: false });
 
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    return next();
+  } else {
+    return res.status(403).json({ message: 'Permission denied. Admins only.' });
+  }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
 router.put('/update', authenticateJWT, async (req, res) => {
     try {
       const authenticatedUser = req.user;
@@ -25,7 +35,7 @@ router.put('/update', authenticateJWT, async (req, res) => {
     }
   });
 
-  router.get('/getAllUsers', async (req, res) => {
+  router.get('/getAllUsers', authenticateJWTm, isAdmin, async (req, res) => {
     try {
       const users = await User.find();
       res.json(users);
