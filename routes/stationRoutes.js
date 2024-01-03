@@ -43,13 +43,13 @@ router.get('/getStationsByType/:type', async (req, res) => {
 
 
 // Gets a specific station by its ID
-router.post('/getStationById', async (req, res) => {
+router.get('/getStationById/:id', async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: 'Invalid station ID.' });
-    }
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //   return res.status(400).json({ message: 'Invalid station ID.' });
+    // }
 
     const station = await Station.findById(id).populate('chargers');
 
@@ -62,6 +62,7 @@ router.post('/getStationById', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // gets all stations
 router.get('/getAll', async (req, res) => {
@@ -143,11 +144,82 @@ router.post('/create', authenticateJWT, isAdmin, async (req, res) => {
   }
 });
 
+// adds chargers for a specific station
+router.post('/addChargers', authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    const { stationId, chargerIds } = req.body;
+
+    const station = await Station.findById(stationId);
+
+    if (!station) {
+      return res.status(404).json({ message: 'Station not found.' });
+    }
+
+    if (!Array.isArray(chargerIds) || chargerIds.length === 0) {
+      return res.status(400).json({ message: 'chargerIds must be an array with at least one ID.' });
+    }
+
+    const availableChargers = await Charger.find({ _id: { $in: chargerIds } });
+
+    const invalidChargers = chargerIds.filter(chargerId => !availableChargers.some(charger => charger.id === chargerId));
+    if (invalidChargers.length > 0) {
+      return res.status(404).json({ message: 'One or more chargers not found in the available chargers.' });
+    }
+
+    const chargerExists = chargerIds.filter(chargerId => station.chargers.includes(chargerId));
+    if(chargerExists.length > 0){
+      return res.status(400).json({ message: 'One or more chargers are already available.' });
+
+    }
+
+    station.chargers.push(...chargerIds);
+
+    await station.save();
+
+    res.json({ message: 'Chargers added to the station successfully.', station });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// deletes chargers for a specific station
+router.post('/deleteChargers', authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    const { stationId, chargerIds } = req.body;
+
+    const station = await Station.findById(stationId);
+
+    if (!station) {
+      return res.status(404).json({ message: 'Station not found.' });
+    }
+
+    if (!Array.isArray(chargerIds) || chargerIds.length === 0) {
+      return res.status(400).json({ message: 'chargerIds must be an array with at least one ID.' });
+    }
+
+    const invalidChargers = chargerIds.filter(chargerId => !station.chargers.includes(chargerId));
+    if (invalidChargers.length > 0) {
+      return res.status(404).json({ message: 'One or more chargers not found in the station.' });
+    }
+
+    station.chargers = station.chargers.filter(id => !chargerIds.includes(id.toString()));
+
+    await station.save();
+
+    res.json({ message: 'Chargers deleted successfully.', station });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+ 
+
+
 
 // Delete station by ID (secured for admin users only)
-router.delete('/delete', authenticateJWT, isAdmin, async (req, res) => {
+router.delete('/delete/:stationId', authenticateJWT, isAdmin, async (req, res) => {
   try {
-    const stationId = req.body.id;
+    const stationId = req.params.stationId; 
     const deletedStation = await Station.findByIdAndDelete(stationId);
 
     if (!deletedStation) {
@@ -159,6 +231,7 @@ router.delete('/delete', authenticateJWT, isAdmin, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Update station by ID (secured for admin users only)
 router.put('/update', authenticateJWT, isAdmin, async (req, res) => {

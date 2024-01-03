@@ -16,7 +16,7 @@ const isAdmin = (req, res, next) => {
   }
 };
 ////////////////////////////////////////////////////////////////////////////
-
+ 
 // crud operations for chargers
 router.post('/add', authenticateJWT, isAdmin, async (req, res) => {
   try {
@@ -39,6 +39,23 @@ router.post('/add', authenticateJWT, isAdmin, async (req, res) => {
   }
 });
 
+router.delete('/delete/:chargerId', authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    const chargerId = req.params.chargerId; 
+    const deletedCharger = await Charger.findByIdAndDelete(chargerId);
+
+    if (!deletedCharger) {
+      return res.status(404).json({ message: 'Charger not found.' });
+    }
+
+    res.json({ message: 'Charger deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
 // Update charger by ID (secured for admin users only)
 router.put('/update', authenticateJWT, isAdmin, async (req, res) => {
   try {
@@ -46,10 +63,10 @@ router.put('/update', authenticateJWT, isAdmin, async (req, res) => {
     const updatedCharger = await Charger.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updatedCharger) {
-      return res.status(404).json({ message: 'Station not found.' });
+      return res.status(404).json({ message: 'Charger not found.' });
     }
 
-    res.json({ message: 'Station updated successfully.', charger: updatedCharger });
+    res.json({ message: 'Charger updated successfully.', charger: updatedCharger });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -63,6 +80,6 @@ router.get('/getAllChargers', async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  });
+  });  
 
 module.exports = router;

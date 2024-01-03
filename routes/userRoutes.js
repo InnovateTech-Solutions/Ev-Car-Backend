@@ -9,11 +9,6 @@ const authenticateJWT = passport.authenticate('jwt', { session: false });
 router.put('/update', authenticateJWT, async (req, res) => {
     try {
       const authenticatedUser = req.user;
-  
-      // if (authenticatedUser.id !== req.body.id) {
-      //   return res.status(403).json({ message: 'Forbidden. You can only update your own profile.' }); 
-      // }
-  
       if (req.body.username) {
         authenticatedUser.username = req.body.username;
       }
@@ -30,14 +25,25 @@ router.put('/update', authenticateJWT, async (req, res) => {
     }
   });
 
-  router.get('/getUserDetails', authenticateJWT, async (req, res) => {
+  router.get('/getAllUsers', async (req, res) => {
     try {
-      const id = req.user._id;
-      const user = await User.findById(id);
-      res.status(201).json(user);
+      const users = await User.find();
+      res.json(users);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   });
+
+  router.get('/getUserDetails', authenticateJWT, (req, res) => {
+    try {
+      const authenticatedUser = req.user;
+  
+      res.status(200).json(authenticatedUser);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
+  
 
 module.exports = router;
