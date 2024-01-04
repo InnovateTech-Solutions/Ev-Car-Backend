@@ -35,7 +35,7 @@ router.put('/update', authenticateJWT, async (req, res) => {
     }
   });
 
-  router.get('/getAllUsers', authenticateJWTm, isAdmin, async (req, res) => {
+  router.get('/getAllUsers', authenticateJWT, isAdmin, async (req, res) => {
     try {
       const users = await User.find();
       res.json(users);
