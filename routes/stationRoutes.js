@@ -74,9 +74,10 @@ router.get('/getAll', async (req, res) => {
   }
 });
 
+// create stations
 router.post('/create', authenticateJWT, isAdmin, async (req, res) => {
   try {
-    const { title, address, coordinates, description, number, type, chargerIds } = req.body;
+    const { title, img, address, coordinates, description, number, type, chargerIds, features } = req.body;
 
     const stationExists = await Station.findOne({ number: number });
 
@@ -84,50 +85,40 @@ router.post('/create', authenticateJWT, isAdmin, async (req, res) => {
       return res.status(400).json({ msg: 'Station already exists' });
     }
     if (type === 'charging_station' || type === 'mobile_charging') {
-      // Check if chargerIds array is provided
       if (!Array.isArray(chargerIds) || chargerIds.length === 0) {
         return res.status(400).json({ message: 'chargerIds must be an array with at least one ID.' });
       }
 
-      // Validate that provided chargerIds exist
       const chargersExist = await Charger.find({ _id: { $in: chargerIds } });
       if (chargersExist.length !== chargerIds.length) {
         return res.status(400).json({ message: 'Invalid chargerIds provided.' });
       }
 
-      // Check if the type is home_charging_provider
-      if (type === 'home_charging_provider') {
-        return res.status(403).json({ message: 'Permission denied. Home charging providers cannot add chargers.' });
-      }
-
-      // Create a new station with provided data
       const station = new Station({
         title,
+        img,
         address,
         coordinates,
-        description,
         number,
         type,
+        features: features,
         chargers: chargerIds,
       });
 
       await station.save();
 
       res.status(201).json({ message: 'Station created successfully.', station });
-
-
     }
 
     else if(type === 'home_charging_provider') {
-       // Create a new station with provided data
-
        const station = new Station({
         title,
+        img,
         address,
         coordinates,
-        description,
         number,
         type,
+        features: features,
       });
 
       await station.save();
@@ -150,6 +141,10 @@ router.post('/addChargers', authenticateJWT, isAdmin, async (req, res) => {
     const { stationId, chargerIds } = req.body;
 
     const station = await Station.findById(stationId);
+    
+    if(station.type === 'home_charging_provider'){   
+      return res.status(404).json({ message: 'cannot add chargers for home charging providers.' });
+    }
 
     if (!station) {
       return res.status(404).json({ message: 'Station not found.' });
@@ -171,7 +166,7 @@ router.post('/addChargers', authenticateJWT, isAdmin, async (req, res) => {
       return res.status(400).json({ message: 'One or more chargers are already available.' });
 
     }
-
+D
     station.chargers.push(...chargerIds);
 
     await station.save();
