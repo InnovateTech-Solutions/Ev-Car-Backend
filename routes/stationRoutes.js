@@ -18,6 +18,23 @@ const isAdmin = (req, res, next) => {
   }
 };
 
+router.get('/search/:query', async (req, res) => {
+  try {
+    const { query } = req.params;
+
+    if (!query) {
+      return res.status(400).json({ message: 'Search query parameter is required.' });
+    }
+
+    const stations = await Station.find({ title: { $regex: new RegExp(query, 'i') } }).populate('chargers');
+
+    res.json(stations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 // gets a list of stations by type
 router.get('/getStationsByType/:type', async (req, res) => {
   try {
