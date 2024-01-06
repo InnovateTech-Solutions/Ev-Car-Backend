@@ -34,7 +34,7 @@ router.post('/addFavorite', authenticateJWT, async (req, res) => {
 
     await favorite.save();
 
-    res.status(201).json({ message: 'Station added to favorites successfully.', favorite });
+    res.status(201).json({favorite });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
