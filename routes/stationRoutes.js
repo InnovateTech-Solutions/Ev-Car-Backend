@@ -54,8 +54,6 @@ router.get('/getStationsByType/:type', async (req, res) => {
   }
 });
 
-
-
 // Gets a specific station by its ID
 router.get('/getStationById/:id', async (req, res) => {
   try {

@@ -53,6 +53,25 @@ router.put('/update', authenticateJWT, async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
+
+
+//checks if user exists
+router.get('/userExists/:number', async (req, res) => {
+  try {
+    const { number } = req.params;
+
+    const existingUser = await User.findOne({ phone: number });
+    var result = true;
+    if (existingUser) {
+      return res.status(400).json({result});
+    }else{
+      result = false;
+      res.status(201).json({result});  
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
   
   
 

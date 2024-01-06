@@ -7,7 +7,6 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
-
 router.post('/register', async (req, res) => {
   try {
     const existingUser = await User.findOne({ phone: req.body.phone });
