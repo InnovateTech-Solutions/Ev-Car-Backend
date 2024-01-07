@@ -178,7 +178,6 @@ router.post('/addChargers', authenticateJWT, isAdmin, async (req, res) => {
       return res.status(400).json({ message: 'One or more chargers are already available.' });
 
     }
-D
     station.chargers.push(...chargerIds);
 
     await station.save();
