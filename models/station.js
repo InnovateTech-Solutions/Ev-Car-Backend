@@ -4,7 +4,7 @@ const chargerSchema = require('./charger');
 
 const stationSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  img: { type: String, required: true },
+  img: { type: String},
   address: { type: String, required: true },
   coordinates: { type: String, required: true },
   number: { type: String, required: true },
